@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ms-usuario
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/ms-usuario-db
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+app:
+  security:
+    jwt:
+      secret: chaveHardedCodePorEnquantoParaFazerSentidoOCodigo
+      expiration: 86400
+  kafka:
+    topic:
+      usuario-eventos: usuario-eventos-v1
