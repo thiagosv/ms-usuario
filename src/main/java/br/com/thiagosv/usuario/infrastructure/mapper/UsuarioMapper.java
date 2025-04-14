@@ -4,9 +4,12 @@ import br.com.thiagosv.usuario.application.dto.response.UsuarioResponse;
 import br.com.thiagosv.usuario.domain.entities.Usuario;
 import br.com.thiagosv.usuario.infrastructure.repository.models.UsuarioModel;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
+
+    UsuarioMapper INSTANCE = Mappers.getMapper(UsuarioMapper.class);
 
     default Usuario toEntity(UsuarioModel model) {
         if (model == null) {

@@ -5,8 +5,8 @@ import br.com.thiagosv.usuario.application.dto.response.TokenResponse;
 import br.com.thiagosv.usuario.application.port.in.AutenticacaoUseCase;
 import br.com.thiagosv.usuario.domain.entities.Usuario;
 import br.com.thiagosv.usuario.domain.exceptions.AutenticacaoException;
+import br.com.thiagosv.usuario.domain.repositories.EventoDomainRepository;
 import br.com.thiagosv.usuario.domain.services.AutenticacaoDomainService;
-import br.com.thiagosv.usuario.domain.services.EventoDomainService;
 import br.com.thiagosv.usuario.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoService implements AutenticacaoUseCase {
 
     private final AutenticacaoDomainService autenticacaoDomainService;
-    private final EventoDomainService eventoDomainService;
+    private final EventoDomainRepository eventoRepository;
     private final JwtService jwtService;
 
     @Override
@@ -26,7 +26,7 @@ public class AutenticacaoService implements AutenticacaoUseCase {
                     request.getEmail(),
                     request.getSenha()
             );
-            eventoDomainService.publicarEventoAutenticacaoSucesso(usuario);
+            eventoRepository.autenticacaoSucesso(usuario);
 
             String token = jwtService.gerarToken(usuario.getId(), usuario.getEmail());
 
@@ -36,7 +36,7 @@ public class AutenticacaoService implements AutenticacaoUseCase {
                     .expiracaoEmSegundos(jwtService.getExpiracaoEmSegundos())
                     .build();
         } catch (AutenticacaoException ae) {
-            eventoDomainService.publicarEventoAutenticacaoErro(request.getEmail());
+            eventoRepository.autenticacaoErro(request.getEmail());
             throw ae;
         }
     }

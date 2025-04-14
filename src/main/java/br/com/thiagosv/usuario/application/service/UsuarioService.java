@@ -1,12 +1,12 @@
 package br.com.thiagosv.usuario.application.service;
 
-import br.com.thiagosv.usuario.application.dto.response.UsuarioResponse;
-import br.com.thiagosv.usuario.application.port.in.UsuarioUseCase;
 import br.com.thiagosv.usuario.application.dto.request.AtualizarUsuarioRequest;
 import br.com.thiagosv.usuario.application.dto.request.CriarUsuarioRequest;
+import br.com.thiagosv.usuario.application.dto.response.UsuarioResponse;
+import br.com.thiagosv.usuario.application.port.in.UsuarioUseCase;
 import br.com.thiagosv.usuario.domain.entities.Usuario;
+import br.com.thiagosv.usuario.domain.repositories.EventoDomainRepository;
 import br.com.thiagosv.usuario.domain.repositories.UsuarioDomainRepository;
-import br.com.thiagosv.usuario.domain.services.EventoDomainService;
 import br.com.thiagosv.usuario.domain.services.UsuarioDomainService;
 import br.com.thiagosv.usuario.infrastructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,14 @@ public class UsuarioService implements UsuarioUseCase {
 
     private final UsuarioDomainRepository usuarioRepository;
     private final UsuarioDomainService domainService;
-    private final EventoDomainService eventoDomainService;
-    private final UsuarioMapper mapper;
+    private final EventoDomainRepository eventoRepository;
+    private final UsuarioMapper usuarioMapper = UsuarioMapper.INSTANCE;
 
     @Override
     public List<UsuarioResponse> listarUsuarios() {
         return usuarioRepository.buscarTodosAtivos()
                 .stream()
-                .map(mapper::toDTO)
+                .map(usuarioMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -37,7 +37,7 @@ public class UsuarioService implements UsuarioUseCase {
     public Optional<UsuarioResponse> buscarPorId(String id) {
         return usuarioRepository.buscarPorId(id)
                 .filter(Usuario::isAtivo)
-                .map(mapper::toDTO);
+                .map(usuarioMapper::toDTO);
     }
 
     @Override
@@ -50,9 +50,9 @@ public class UsuarioService implements UsuarioUseCase {
         );
 
         Usuario usuarioSalvo = usuarioRepository.salvar(usuario);
-        eventoDomainService.publicarEventoUsuarioCriado(usuarioSalvo);
+        eventoRepository.usuarioCriado(usuarioSalvo);
 
-        return mapper.toDTO(usuarioSalvo);
+        return usuarioMapper.toDTO(usuarioSalvo);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class UsuarioService implements UsuarioUseCase {
 
                     return usuarioRepository.salvar(atualizado);
                 })
-                .map(mapper::toDTO);
+                .map(usuarioMapper::toDTO);
     }
 
     @Override

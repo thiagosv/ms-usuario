@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class UsuarioRepositoryAdapter implements UsuarioDomainRepository {
 
     private final UsuarioRepository usuarioRepository;
-    private final UsuarioMapper usuarioMapper;
+    private final UsuarioMapper usuarioMapper = UsuarioMapper.INSTANCE;
 
     @Override
     public List<Usuario> buscarTodosAtivos() {
