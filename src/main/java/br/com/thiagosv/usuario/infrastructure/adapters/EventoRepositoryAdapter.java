@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EventoAdapter implements EventoDomainRepository {
+public class EventoRepositoryAdapter implements EventoDomainRepository {
 
     private final ApplicationEventPublisher eventPublisher;
     private final UsuarioEventMapper mapper = UsuarioEventMapper.INSTANCE;

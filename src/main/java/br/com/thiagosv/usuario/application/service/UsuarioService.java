@@ -11,6 +11,7 @@ import br.com.thiagosv.usuario.domain.services.UsuarioDomainService;
 import br.com.thiagosv.usuario.infrastructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,7 @@ public class UsuarioService implements UsuarioUseCase {
     }
 
     @Override
+    @Transactional
     public UsuarioResponse criarUsuario(CriarUsuarioRequest request) {
         Usuario usuario = domainService.criarUsuario(
                 request.getNome(),
