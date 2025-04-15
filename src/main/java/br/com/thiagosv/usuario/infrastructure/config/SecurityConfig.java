@@ -30,7 +30,6 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/swagger-resources/**").permitAll()
                                 .requestMatchers("/webjars/**").permitAll()
-                                .requestMatchers("/api/v1/usuarios/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(
