@@ -44,12 +44,7 @@ public class UsuarioService implements UsuarioUseCase {
     @Override
     @Transactional
     public UsuarioResponse criarUsuario(CriarUsuarioRequest request) {
-        Usuario usuario = domainService.criarUsuario(
-                request.getNome(),
-                request.getEmail(),
-                request.getSenha(),
-                request.getDataNascimento()
-        );
+        Usuario usuario = domainService.criarUsuario(request);
 
         Usuario usuarioSalvo = usuarioRepository.salvar(usuario);
         eventoRepository.usuarioCriado(usuarioSalvo);
@@ -61,12 +56,7 @@ public class UsuarioService implements UsuarioUseCase {
     public Optional<UsuarioResponse> atualizarUsuario(String id, AtualizarUsuarioRequest request) {
         return usuarioRepository.buscarPorId(id)
                 .map(usuario -> {
-                    Usuario atualizado = domainService.atualizarUsuario(
-                            usuario,
-                            request.getNome(),
-                            request.getEmail(),
-                            request.getDataNascimento()
-                    );
+                    Usuario atualizado = domainService.atualizarUsuario(usuario, request);
 
                     return usuarioRepository.salvar(atualizado);
                 })

@@ -14,6 +14,7 @@ public class MockUtil {
         response.setId(ConstantUtil.ID_USUARIO);
         response.setNome(ConstantUtil.NOME_USUARIO);
         response.setEmail(ConstantUtil.EMAIL_VALIDO);
+        response.setNumeroCelular(ConstantUtil.NUMERO_CELULAR);
         return response;
     }
 
@@ -37,6 +38,18 @@ public class MockUtil {
         request.setNome(ConstantUtil.NOME_USUARIO);
         request.setEmail(ConstantUtil.EMAIL_VALIDO);
         request.setSenha(ConstantUtil.SENHA);
+        request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+        request.setNumeroCelular(ConstantUtil.NUMERO_CELULAR);
+        return request;
+    }
+
+    public static CriarUsuarioRequest criarOutroUsuarioRequest() {
+        CriarUsuarioRequest request = new CriarUsuarioRequest();
+        request.setNome(ConstantUtil.OUTRO_NOME_USUARIO);
+        request.setEmail(ConstantUtil.OUTRO_EMAIL_VALIDO);
+        request.setSenha(ConstantUtil.SENHA);
+        request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+        request.setNumeroCelular(ConstantUtil.NUMERO_CELULAR);
         return request;
     }
 
@@ -44,6 +57,8 @@ public class MockUtil {
         AtualizarUsuarioRequest request = new AtualizarUsuarioRequest();
         request.setNome(ConstantUtil.NOME_USUARIO_ATUALIZADO);
         request.setEmail(ConstantUtil.EMAIL_VALIDO);
+        request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+        request.setNumeroCelular(ConstantUtil.NUMERO_CELULAR_ATUALIZADO);
         return request;
     }
 }

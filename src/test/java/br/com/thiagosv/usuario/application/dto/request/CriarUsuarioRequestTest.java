@@ -1,6 +1,7 @@
 package br.com.thiagosv.usuario.application.dto.request;
 
 import br.com.thiagosv.usuario.util.ConstantUtil;
+import br.com.thiagosv.usuario.util.MockUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -8,7 +9,6 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Set;
 import java.util.stream.Stream;
@@ -26,39 +26,30 @@ class CriarUsuarioRequestTest {
         validator = factory.getValidator();
     }
 
+    @Test
+    @DisplayName("Deve validar todos os campos quando for uma requisicao valida")
+    void deveValidarNomeQuandoForValido() {
+        // GIVEN
+        CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+
+        // WHEN
+        Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
+
+        // THEN
+        assertThat(violations).isEmpty();
+    }
+
     @Nested
     @DisplayName("Testes para o campo nome")
     class NomeTests {
-
-        @Test
-        @DisplayName("Deve validar nome quando for válido")
-        void deveValidarNomeQuandoForValido() {
-            // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
 
         @ParameterizedTest(name = "Caso {index}: nome={0}")
         @MethodSource("nomesNullOuBranco")
         @DisplayName("Deve rejeitar quando nome for muito branco ou null")
         void deveRejeitarQuandoNomeForEmBranco(String nomeInvalido) {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    nomeInvalido,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setNome(nomeInvalido);
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -78,14 +69,10 @@ class CriarUsuarioRequestTest {
         @ParameterizedTest(name = "Caso {index}: nome={0}")
         @MethodSource("nomesCurtosOuLongos")
         @DisplayName("Deve rejeitar quando nome for muito curto ou longo")
-        void deveRejeitarQuandoNomeForMuitoCurto() {
+        void deveRejeitarQuandoNomeForMuitoCurto(String nomeInvalido) {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    "A",
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setNome(nomeInvalido);
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -98,7 +85,7 @@ class CriarUsuarioRequestTest {
         private static Stream<String> nomesCurtosOuLongos() {
             return Stream.of(
                     "A",
-                    "A".repeat(100)
+                    "A".repeat(101)
             );
         }
 
@@ -107,12 +94,8 @@ class CriarUsuarioRequestTest {
         @DisplayName("Deve rejeitar quando nome for invalido")
         void deveRejeitarQuandoNomeForInvalido() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    "",
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setNome("");
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -132,34 +115,12 @@ class CriarUsuarioRequestTest {
     @DisplayName("Testes para o campo email")
     class EmailTests {
 
-        @Test
-        @DisplayName("Deve validar email quando for válido")
-        void deveValidarEmailQuandoForValido() {
-            // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
-
         @ParameterizedTest(name = "Deve rejeitar quando email for \"{0}\"")
         @MethodSource("emailsInvalidos")
         void deveRejeitarQuandoEmailForEmBrancoOuNull(String emailInvalido) {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    emailInvalido,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setEmail(emailInvalido);
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -180,12 +141,8 @@ class CriarUsuarioRequestTest {
         @DisplayName("Deve rejeitar quando email for inválido")
         void deveRejeitarQuandoEmailForInvalido() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    "email-invalido",
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setEmail("email-invalido");
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -201,32 +158,10 @@ class CriarUsuarioRequestTest {
     class SenhaTests {
 
         @Test
-        @DisplayName("Deve validar senha quando for válida")
-        void deveValidarSenhaQuandoForValida() {
-            // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
-
-        @Test
         void deveRejeitarQuandoSenhaForNull() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    null,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request =  MockUtil.criarUsuarioRequest();
+            request.setSenha(null);
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -239,12 +174,8 @@ class CriarUsuarioRequestTest {
         @Test
         void deveRejeitarQuandoSenhaEmBranco() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    "",
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setSenha("");
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -261,12 +192,8 @@ class CriarUsuarioRequestTest {
         @DisplayName("Deve rejeitar quando senha for muito curta")
         void deveRejeitarQuandoSenhaForMuitoCurta() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    "12345",
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setSenha("12345");
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -282,33 +209,11 @@ class CriarUsuarioRequestTest {
     class DataNascimentoTests {
 
         @Test
-        @DisplayName("Deve validar dataNascimento quando for válida")
-        void deveValidarDataNascimentoQuandoForValida() {
-            // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
-
-        @Test
         @DisplayName("Deve rejeitar quando dataNascimento for nula")
         void deveRejeitarQuandoDataNascimentoForNula() {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.SENHA,
-                    null
-            );
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setDataNascimento(null);
 
             // WHEN
             Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
@@ -316,6 +221,50 @@ class CriarUsuarioRequestTest {
             // THEN
             assertThat(violations).hasSize(1);
             assertThat(violations.iterator().next().getMessage()).isEqualTo("A data de nascimento é obrigatória!");
+        }
+    }
+
+    @Nested
+    @DisplayName("Testes para o campo numeroCelular")
+    class NumeroCelularTests {
+
+        @Test
+        @DisplayName("Deve rejeitar quando numeroCelular for null")
+        void deveRejeitarQuandoNumeroCelularForNull() {
+            // GIVEN
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setNumeroCelular(null);
+
+            // WHEN
+            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
+
+            // THEN
+            assertThat(violations).hasSize(1);
+            assertThat(violations)
+                    .extracting(ConstraintViolation::getMessage)
+                    .containsExactlyInAnyOrder("O número é obrigatório!");
+        }
+
+        @ParameterizedTest
+        @MethodSource("numerosCelularInvalidos")
+        @DisplayName("Deve rejeitar quando numeroCelular for invalido")
+        void deveRejeitarQuandoNumeroCeelularForInvalido(String numeroCelularInvalido) {
+            // GIVEN
+            CriarUsuarioRequest request = MockUtil.criarUsuarioRequest();
+            request.setNumeroCelular(numeroCelularInvalido);
+
+            // WHEN
+            Set<ConstraintViolation<CriarUsuarioRequest>> violations = validator.validate(request);
+
+            // THEN
+            assertThat(violations).hasSize(1);
+            assertThat(violations)
+                    .extracting(ConstraintViolation::getMessage)
+                    .containsExactlyInAnyOrder("O número deve possuir 11 digítos, contando com o DDD");
+        }
+
+        private static Stream<String> numerosCelularInvalidos(){
+            return Stream.of("5199999999","519999999999", "");
         }
     }
 
@@ -334,12 +283,14 @@ class CriarUsuarioRequestTest {
             request.setEmail(ConstantUtil.EMAIL_VALIDO);
             request.setSenha(ConstantUtil.SENHA);
             request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+            request.setNumeroCelular(ConstantUtil.NUMERO_CELULAR);
 
             // THEN
             assertThat(request.getNome()).isEqualTo(ConstantUtil.NOME_USUARIO);
             assertThat(request.getEmail()).isEqualTo(ConstantUtil.EMAIL_VALIDO);
             assertThat(request.getSenha()).isEqualTo(ConstantUtil.SENHA);
             assertThat(request.getDataNascimento()).isEqualTo(ConstantUtil.DATA_NASCIMENTO);
+            assertThat(request.getNumeroCelular()).isEqualTo(ConstantUtil.NUMERO_CELULAR);
         }
     }
 
@@ -356,7 +307,8 @@ class CriarUsuarioRequestTest {
                 nome,
                 email,
                 senha,
-                ConstantUtil.DATA_NASCIMENTO
+                ConstantUtil.DATA_NASCIMENTO,
+                ConstantUtil.NUMERO_CELULAR
         );
 
         // THEN
@@ -364,5 +316,6 @@ class CriarUsuarioRequestTest {
         assertThat(request.getEmail()).isEqualTo(email);
         assertThat(request.getSenha()).isEqualTo(senha);
         assertThat(request.getDataNascimento()).isEqualTo(ConstantUtil.DATA_NASCIMENTO);
+        assertThat(request.getNumeroCelular()).isEqualTo(ConstantUtil.NUMERO_CELULAR);
     }
 }

@@ -1,13 +1,14 @@
 package br.com.thiagosv.usuario.domain.services;
 
+import br.com.thiagosv.usuario.application.dto.request.AtualizarUsuarioRequest;
+import br.com.thiagosv.usuario.application.dto.request.CriarUsuarioRequest;
 import br.com.thiagosv.usuario.domain.entities.Usuario;
 import br.com.thiagosv.usuario.domain.exceptions.DomainException;
 import br.com.thiagosv.usuario.domain.ports.out.PasswordEncryptionPort;
 import br.com.thiagosv.usuario.domain.repositories.UsuarioDomainRepository;
+import br.com.thiagosv.usuario.infrastructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -16,21 +17,26 @@ public class UsuarioDomainService {
     private final UsuarioDomainRepository usuarioRepository;
     private final PasswordEncryptionPort passwordEncryption;
 
-    public Usuario criarUsuario(String nome, String email, String senha, LocalDate dataNascimento) {
-        if (usuarioRepository.existeUsuarioAtivoComEmail(email))
+    private final UsuarioMapper usuarioMapper = UsuarioMapper.INSTANCE;
+
+    public Usuario criarUsuario(CriarUsuarioRequest request) {
+        if (usuarioRepository.existeUsuarioAtivoComEmail(request.getEmail()))
             throw new DomainException("Já existe um usuário ativo com este email");
 
-        return new Usuario(nome, email, passwordEncryption.criptografar(senha), dataNascimento);
+        return usuarioMapper.toEntity(
+                request.getNome(), request.getEmail(), passwordEncryption.criptografar(request.getSenha()),
+                request.getDataNascimento(), request.getNumeroCelular()
+        );
     }
 
-    public Usuario atualizarUsuario(Usuario usuario, String novoNome, String novoEmail, LocalDate novaDataNascimento) {
+    public Usuario atualizarUsuario(Usuario usuario, AtualizarUsuarioRequest request) {
         if (!usuario.isAtivo())
             throw new DomainException("Não é possível atualizar um usuário inativo");
 
-        if (!usuario.getEmail().equals(novoEmail) && usuarioRepository.existeUsuarioAtivoComEmail(novoEmail))
+        if (!usuario.getEmail().equals(request.getEmail()) && usuarioRepository.existeUsuarioAtivoComEmail(request.getEmail()))
             throw new DomainException("Este email já está em uso por outro usuário ativo");
 
-        usuario.atualizarDados(novoNome, novoEmail, novaDataNascimento);
+        usuario.atualizarDados(request.getNome(), request.getEmail(), request.getDataNascimento(), request.getNumeroCelular());
 
         return usuario;
     }

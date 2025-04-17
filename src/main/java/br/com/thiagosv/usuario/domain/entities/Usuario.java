@@ -15,6 +15,7 @@ public class Usuario {
     private String email;
     private final String senha;
     private LocalDate dataNascimento;
+    private String numeroCelular;
     private StatusUsuario status;
     private final LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;
@@ -24,52 +25,60 @@ public class Usuario {
     private static final int IDADE_MINIMA = 18;
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    private static final Pattern NUMERO_CELULAR = Pattern.compile("^[0-9]{11}$");
 
-    public Usuario(String nome, String email, String senha, LocalDate dataNascimento) {
+    public Usuario(String nome, String email, String senha, LocalDate dataNascimento, String numeroCelular) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.dataNascimento = dataNascimento;
         this.status = StatusUsuario.ATIVO;
         this.dataCadastro = LocalDateTime.now();
+        this.numeroCelular = numeroCelular;
 
         validarNome();
         validarEmail();
         validarIdade();
+        validarCelular();
     }
 
     public Usuario(String id, String nome, String email, String senha, LocalDate dataNascimento,
-                   StatusUsuario status, LocalDateTime dataCadastro, LocalDateTime dataAtualizacao) {
+                   StatusUsuario status, LocalDateTime dataCadastro, LocalDateTime dataAtualizacao, String numeroCelular) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.dataNascimento = dataNascimento;
+        this.numeroCelular = numeroCelular;
         this.status = status != null ? status : StatusUsuario.ATIVO;
         this.dataCadastro = dataCadastro != null ? dataCadastro : LocalDateTime.now();
         this.dataAtualizacao = dataAtualizacao;
 
     }
 
-    public void atualizarDados(String nome, String email, LocalDate dataNascimento) {
+    public void atualizarDados(String nome, String email, LocalDate dataNascimento, String numeroCelular) {
         String nomeAtual = this.nome;
         String emailAtual = this.email;
         LocalDate dataNascimentoAtual = this.dataNascimento;
+        String numeroCelularAtual = this.numeroCelular;
 
         this.nome = nome;
         this.email = email;
         this.dataNascimento = dataNascimento;
+        this.numeroCelular = numeroCelular;
 
         try {
             validarNome();
             validarEmail();
             validarIdade();
+            validarCelular();
 
             this.dataAtualizacao = LocalDateTime.now();
         } catch (DomainException e) {
             this.nome = nomeAtual;
             this.email = emailAtual;
             this.dataNascimento = dataNascimentoAtual;
+            this.numeroCelular = numeroCelularAtual;
 
             throw e;
         }
@@ -128,6 +137,16 @@ public class Usuario {
         }
     }
 
+
+    private void validarCelular() {
+        if (numeroCelular == null || numeroCelular.trim().isEmpty()) {
+            throw new DomainException("O celular não pode ser vazio");
+        }
+
+        if (!NUMERO_CELULAR.matcher(numeroCelular).matches()) {
+            throw new DomainException("O celular fornecido não é válido");
+        }
+    }
     public boolean isAtivo() {
         return this.status == StatusUsuario.ATIVO;
     }

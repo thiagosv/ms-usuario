@@ -22,6 +22,7 @@ public class UsuarioModel {
     private String email;
     private String senha;
     private LocalDate dataNascimento;
+    private String numeroCelular;
     private StatusUsuario status;
     private LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;

@@ -1,15 +1,15 @@
 package br.com.thiagosv.usuario.application.dto.request;
 
 import br.com.thiagosv.usuario.util.ConstantUtil;
+import br.com.thiagosv.usuario.util.MockUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,37 +26,30 @@ class AtualizarUsuarioRequestTest {
         validator = factory.getValidator();
     }
 
+    @Test
+    @DisplayName("Deve validar todos os campos quando for uma requisicao valida")
+    void deveValidarNomeQuandoForValido() {
+        // GIVEN
+        AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+
+        // WHEN
+        Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
+
+        // THEN
+        assertThat(violations).isEmpty();
+    }
+
     @Nested
     @DisplayName("Testes para o campo nome")
     class NomeTests {
-
-        @Test
-        @DisplayName("Deve validar nome quando for válido")
-        void deveValidarNomeQuandoForValido() {
-            // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
 
         @ParameterizedTest(name = "Caso {index}: senha={0}")
         @MethodSource("nomesInvalidos")
         @DisplayName("Deve rejeitar quando nome for invalido")
         void deveRejeitarQuandoNomeForInvalido(String nomeInvalido) {
             // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    nomeInvalido,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+            request.setNome(nomeInvalido);
 
             // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
@@ -79,33 +72,13 @@ class AtualizarUsuarioRequestTest {
     @DisplayName("Testes para o campo email")
     class EmailTests {
 
-        @Test
-        @DisplayName("Deve validar email quando for válido")
-        void deveValidarEmailQuandoForValido() {
-            // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
-
         @ParameterizedTest(name = "Caso {index}: senha={0}")
         @MethodSource("emailsInvalidos")
         @DisplayName("Deve rejeitar quando email for invalido")
         void deveRejeitarQuandoEmailForInvalido(String emailInvalido) {
             // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    emailInvalido,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+            request.setEmail(emailInvalido);
 
             // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
@@ -128,31 +101,11 @@ class AtualizarUsuarioRequestTest {
     class DataNascimentoTests {
 
         @Test
-        @DisplayName("Deve validar dataNascimento quando for válida")
-        void deveValidarDataNascimentoQuandoForValida() {
-            // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    ConstantUtil.DATA_NASCIMENTO
-            );
-
-            // WHEN
-            Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
-
-            // THEN
-            assertThat(violations).isEmpty();
-        }
-
-        @Test
         @DisplayName("Deve rejeitar quando dataNascimento for nula")
         void deveRejeitarQuandoDataNascimentoForNula() {
             // GIVEN
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest(
-                    ConstantUtil.NOME_USUARIO,
-                    ConstantUtil.EMAIL_VALIDO,
-                    null
-            );
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+            request.setDataNascimento(null);
 
             // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
@@ -160,6 +113,50 @@ class AtualizarUsuarioRequestTest {
             // THEN
             assertThat(violations).hasSize(1);
             assertThat(violations.iterator().next().getMessage()).isEqualTo("A data de nascimento é obrigatória!");
+        }
+    }
+
+    @Nested
+    @DisplayName("Testes para o campo numeroCelular")
+    class NumeroCelularTests {
+
+        @Test
+        @DisplayName("Deve rejeitar quando numeroCelular for null")
+        void deveRejeitarQuandoNumeroCelularForNull() {
+            // GIVEN
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+            request.setNumeroCelular(null);
+
+            // WHEN
+            Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
+
+            // THEN
+            assertThat(violations).hasSize(1);
+            assertThat(violations)
+                    .extracting(ConstraintViolation::getMessage)
+                    .containsExactlyInAnyOrder("O número é obrigatório!");
+        }
+
+        @ParameterizedTest
+        @MethodSource("numerosCelularInvalidos")
+        @DisplayName("Deve rejeitar quando numeroCelular for invalido")
+        void deveRejeitarQuandoNumeroCelularForInvalido(String numeroCelularInvalido) {
+            // GIVEN
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
+            request.setNumeroCelular(numeroCelularInvalido);
+
+            // WHEN
+            Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
+
+            // THEN
+            assertThat(violations).hasSize(1);
+            assertThat(violations)
+                    .extracting(ConstraintViolation::getMessage)
+                    .containsExactlyInAnyOrder("O número deve possuir 11 digítos, contando com o DDD");
+        }
+
+        private static Stream<String> numerosCelularInvalidos(){
+            return Stream.of("5199999999","519999999999", "");
         }
     }
 

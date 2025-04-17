@@ -15,7 +15,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -73,6 +72,7 @@ class UsuarioControllerTest {
             usuario.setNome(ConstantUtil.NOME_USUARIO);
             usuario.setEmail(ConstantUtil.EMAIL_VALIDO);
             usuario.setSenha(passwordEncoder.encode(ConstantUtil.SENHA));
+            usuario.setNumeroCelular(ConstantUtil.NUMERO_CELULAR);
 
             usuarioRepository.save(usuario);
 
@@ -139,11 +139,7 @@ class UsuarioControllerTest {
         @DisplayName("Deve criar um usuário com sucesso")
         void deveCriarUsuarioComSucesso() throws Exception {
             // GIVEN
-            CriarUsuarioRequest request = new CriarUsuarioRequest();
-            request.setNome(ConstantUtil.OUTRO_NOME_USUARIO);
-            request.setEmail(ConstantUtil.OUTRO_EMAIL_VALIDO);
-            request.setSenha(ConstantUtil.SENHA);
-            request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+            CriarUsuarioRequest request = MockUtil.criarOutroUsuarioRequest();
 
             // WHEN
             ResultActions result = mockMvc.perform(
@@ -158,7 +154,8 @@ class UsuarioControllerTest {
                     .andExpect(jsonPath("$.id").isNotEmpty())
                     .andExpect(jsonPath("$.nome").value(request.getNome()))
                     .andExpect(jsonPath("$.email").value(request.getEmail()))
-                    .andExpect(jsonPath("$.dataNascimento").value(request.getDataNascimento().toString()));
+                    .andExpect(jsonPath("$.dataNascimento").value(request.getDataNascimento().toString()))
+                    .andExpect(jsonPath("$.numeroCelular").value(request.getNumeroCelular()));
         }
 
         @Test
@@ -185,10 +182,7 @@ class UsuarioControllerTest {
         void deveAtualizarUsuarioComSucesso() throws Exception {
             // GIVEN
             String id = ConstantUtil.ID_USUARIO;
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest();
-            request.setNome(ConstantUtil.NOME_USUARIO_ATUALIZADO);
-            request.setEmail(ConstantUtil.EMAIL_VALIDO);
-            request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
 
             // WHEN
             ResultActions result = mockMvc.perform(
@@ -201,7 +195,9 @@ class UsuarioControllerTest {
             // THEN
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.nome").value(request.getNome()))
-                    .andExpect(jsonPath("$.email").value(request.getEmail()));
+                    .andExpect(jsonPath("$.email").value(request.getEmail()))
+                    .andExpect(jsonPath("$.dataNascimento").value(request.getDataNascimento().toString()))
+                    .andExpect(jsonPath("$.numeroCelular").value(request.getNumeroCelular()));
         }
 
         @Test
@@ -209,10 +205,7 @@ class UsuarioControllerTest {
         void deveRetornarNotFoundAoAtualizarUsuarioInexistente() throws Exception {
             // GIVEN
             String idInexistente = ConstantUtil.ID_USUARIO_INEXISTENTE;
-            AtualizarUsuarioRequest request = new AtualizarUsuarioRequest();
-            request.setNome(ConstantUtil.NOME_USUARIO_ATUALIZADO);
-            request.setEmail(ConstantUtil.EMAIL_VALIDO);
-            request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
+            AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
 
             // WHEN
             ResultActions result = mockMvc.perform(
