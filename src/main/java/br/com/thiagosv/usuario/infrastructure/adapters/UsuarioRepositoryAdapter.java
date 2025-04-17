@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class UsuarioRepositoryAdapter implements UsuarioDomainRepository {
+public final class UsuarioRepositoryAdapter implements UsuarioDomainRepository {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper = UsuarioMapper.INSTANCE;
