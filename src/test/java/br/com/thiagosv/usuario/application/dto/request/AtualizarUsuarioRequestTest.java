@@ -29,13 +29,10 @@ class AtualizarUsuarioRequestTest {
     @Test
     @DisplayName("Deve validar todos os campos quando for uma requisicao valida")
     void deveValidarNomeQuandoForValido() {
-        // GIVEN
         AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
 
-        // WHEN
         Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-        // THEN
         assertThat(violations).isEmpty();
     }
 
@@ -47,14 +44,11 @@ class AtualizarUsuarioRequestTest {
         @MethodSource("nomesInvalidos")
         @DisplayName("Deve rejeitar quando nome for invalido")
         void deveRejeitarQuandoNomeForInvalido(String nomeInvalido) {
-            // GIVEN
             AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
             request.setNome(nomeInvalido);
 
-            // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-            // THEN
             assertThat(violations).isNotEmpty();
         }
 
@@ -76,14 +70,11 @@ class AtualizarUsuarioRequestTest {
         @MethodSource("emailsInvalidos")
         @DisplayName("Deve rejeitar quando email for invalido")
         void deveRejeitarQuandoEmailForInvalido(String emailInvalido) {
-            // GIVEN
             AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
             request.setEmail(emailInvalido);
 
-            // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-            // THEN
             assertThat(violations).isNotEmpty();
         }
 
@@ -103,14 +94,11 @@ class AtualizarUsuarioRequestTest {
         @Test
         @DisplayName("Deve rejeitar quando dataNascimento for nula")
         void deveRejeitarQuandoDataNascimentoForNula() {
-            // GIVEN
             AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
             request.setDataNascimento(null);
 
-            // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-            // THEN
             assertThat(violations).hasSize(1);
             assertThat(violations.iterator().next().getMessage()).isEqualTo("A data de nascimento é obrigatória!");
         }
@@ -123,14 +111,11 @@ class AtualizarUsuarioRequestTest {
         @Test
         @DisplayName("Deve rejeitar quando numeroCelular for null")
         void deveRejeitarQuandoNumeroCelularForNull() {
-            // GIVEN
             AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
             request.setNumeroCelular(null);
 
-            // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-            // THEN
             assertThat(violations).hasSize(1);
             assertThat(violations)
                     .extracting(ConstraintViolation::getMessage)
@@ -141,14 +126,11 @@ class AtualizarUsuarioRequestTest {
         @MethodSource("numerosCelularInvalidos")
         @DisplayName("Deve rejeitar quando numeroCelular for invalido")
         void deveRejeitarQuandoNumeroCelularForInvalido(String numeroCelularInvalido) {
-            // GIVEN
             AtualizarUsuarioRequest request = MockUtil.criarAtualizarUsuarioRequest();
             request.setNumeroCelular(numeroCelularInvalido);
 
-            // WHEN
             Set<ConstraintViolation<AtualizarUsuarioRequest>> violations = validator.validate(request);
 
-            // THEN
             assertThat(violations).hasSize(1);
             assertThat(violations)
                     .extracting(ConstraintViolation::getMessage)
@@ -167,15 +149,12 @@ class AtualizarUsuarioRequestTest {
         @Test
         @DisplayName("Deve usar getters e setters corretamente")
         void deveUsarGettersESettersCorretamente() {
-            // GIVEN
             AtualizarUsuarioRequest request = new AtualizarUsuarioRequest();
             
-            // WHEN
             request.setNome(ConstantUtil.NOME_USUARIO);
             request.setEmail(ConstantUtil.EMAIL_VALIDO);
             request.setDataNascimento(ConstantUtil.DATA_NASCIMENTO);
             
-            // THEN
             assertThat(request.getNome()).isEqualTo(ConstantUtil.NOME_USUARIO);
             assertThat(request.getEmail()).isEqualTo(ConstantUtil.EMAIL_VALIDO);
             assertThat(request.getDataNascimento()).isEqualTo(ConstantUtil.DATA_NASCIMENTO);

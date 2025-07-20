@@ -2,8 +2,10 @@ package br.com.thiagosv.usuario.application.exception;
 
 import br.com.thiagosv.usuario.domain.exceptions.AutenticacaoException;
 import br.com.thiagosv.usuario.domain.exceptions.DomainException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @RestControllerAdvice
+@Log4j2
 public class ControllerExceptionHandler {
 
     public record ErrorResponse(int status, String mensagem) {
@@ -22,7 +26,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -45,6 +49,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleGlobalException(Exception ex) {
+        log.error("Ocorreu um erro interno no servidor. Erro: {}", ex.getMessage(), ex);
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro interno no servidor");
     }
 }

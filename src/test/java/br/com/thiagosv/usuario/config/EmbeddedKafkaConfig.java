@@ -19,8 +19,7 @@ public class EmbeddedKafkaConfig {
             try {
                 ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
 
-                EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(1, true,
-                        "autenticacao-topic", "usuario-eventos-v1");
+                EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(1, true, "autenticacao-topic", "usuario-eventos-v1");
                 broker.afterPropertiesSet();
 
                 Map<String, Object> kafkaProps = new HashMap<>();

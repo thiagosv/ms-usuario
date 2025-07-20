@@ -16,16 +16,13 @@ public class KafkaEventPublisher {
 
     private final KafkaTemplate<String, UsuarioEvent> kafkaTemplate;
 
-    @Value("${app.kafka.topic.usuario-eventos}")
+    @Value("${app.kafka.topic.usuario-eventos:usuario-eventos-v1}")
     private String topico;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void publicar(UsuarioEvent evento) {
-        log.info("Publicando evento {} para o tópico {}", evento.getEvento(), topico);
-
         try {
             kafkaTemplate.send(topico, evento.getEmail(), evento);
-            log.info("Evento {} publicado com sucesso", evento.getEvento());
         } catch (Exception e) {
             log.error("Erro ao publicar evento {} para o tópico {}: {}",
                     evento.getEvento(), topico, e.getMessage(), e);

@@ -23,10 +23,8 @@ class TokenResponseTest {
         @Test
         @DisplayName("Deve criar TokenResponse vazio quando usar construtor sem argumentos")
         void deveCriarTokenResponseVazioQuandoUsarConstrutorSemArgumentos() {
-            // GIVEN
             TokenResponse tokenResponse = new TokenResponse();
 
-            // THEN
             assertThat(tokenResponse).hasAllNullFieldsOrPropertiesExcept("expiracaoEmSegundos");
             assertThat(tokenResponse.getExpiracaoEmSegundos()).isZero();
         }
@@ -34,15 +32,12 @@ class TokenResponseTest {
         @Test
         @DisplayName("Deve criar TokenResponse com valores quando usar construtor com argumentos")
         void deveCriarTokenResponseComValoresQuandoUsarConstrutorComArgumentos() {
-            // GIVEN
             String token = ConstantUtil.TOKEN_EXEMPLO;
             String tipo = ConstantUtil.TIPO_TOKEN;
             long expiracao = ConstantUtil.EXPIRACAO_TOKEN;
 
-            // WHEN
             TokenResponse tokenResponse = new TokenResponse(token, tipo, expiracao);
 
-            // THEN
             assertThat(tokenResponse.getToken()).isEqualTo(token);
             assertThat(tokenResponse.getTipo()).isEqualTo(tipo);
             assertThat(tokenResponse.getExpiracaoEmSegundos()).isEqualTo(expiracao);
@@ -51,19 +46,16 @@ class TokenResponseTest {
         @Test
         @DisplayName("Deve criar TokenResponse quando usar Builder")
         void deveCriarTokenResponseQuandoUsarBuilder() {
-            // GIVEN
             String token = ConstantUtil.TOKEN_EXEMPLO;
             String tipo = ConstantUtil.TIPO_TOKEN;
             long expiracao = ConstantUtil.EXPIRACAO_TOKEN;
 
-            // WHEN
             TokenResponse tokenResponse = TokenResponse.builder()
                     .token(token)
                     .tipo(tipo)
                     .expiracaoEmSegundos(expiracao)
                     .build();
 
-            // THEN
             assertThat(tokenResponse.getToken()).isEqualTo(token);
             assertThat(tokenResponse.getTipo()).isEqualTo(tipo);
             assertThat(tokenResponse.getExpiracaoEmSegundos()).isEqualTo(expiracao);
@@ -77,18 +69,15 @@ class TokenResponseTest {
         @Test
         @DisplayName("Deve usar getters e setters corretamente")
         void deveUsarGettersESettersCorretamente() {
-            // GIVEN
             TokenResponse tokenResponse = new TokenResponse();
             String token = ConstantUtil.TOKEN_EXEMPLO;
             String tipo = ConstantUtil.TIPO_TOKEN;
             long expiracao = ConstantUtil.EXPIRACAO_TOKEN;
             
-            // WHEN
             tokenResponse.setToken(token);
             tokenResponse.setTipo(tipo);
             tokenResponse.setExpiracaoEmSegundos(expiracao);
             
-            // THEN
             assertThat(tokenResponse.getToken()).isEqualTo(token);
             assertThat(tokenResponse.getTipo()).isEqualTo(tipo);
             assertThat(tokenResponse.getExpiracaoEmSegundos()).isEqualTo(expiracao);
@@ -110,7 +99,6 @@ class TokenResponseTest {
                     .expiracaoEmSegundos(ConstantUtil.EXPIRACAO_TOKEN)
                     .build();
             
-            // THEN
             assertThat(tokenResponse.getToken()).isEqualTo(token);
             assertThat(tokenResponse.getTipo()).isEqualTo(tipo);
             assertThat(tokenResponse.getExpiracaoEmSegundos()).isEqualTo(ConstantUtil.EXPIRACAO_TOKEN);
@@ -136,7 +124,6 @@ class TokenResponseTest {
                 .expiracaoEmSegundos(expiracao)
                 .build();
         
-        // THEN
         assertThat(tokenResponse.getToken()).isEqualTo(token);
         assertThat(tokenResponse.getTipo()).isEqualTo(tipo);
         assertThat(tokenResponse.getExpiracaoEmSegundos()).isEqualTo(expiracao);
